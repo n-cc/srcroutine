@@ -1,0 +1,6 @@
+#!/bin/bash
+source /usr/src/lib/env
+if [[ -z "$@" ]] || [[ "$1" == "-h" ]]; then
+  echo "usage: -h"
+  exit
+fi
