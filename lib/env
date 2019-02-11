@@ -1,0 +1,5 @@
+# srcroutine variables
+SRCROUTINE_ROOT="/usr/src"
+
+# configure-time variables
+PREFIX="/usr"

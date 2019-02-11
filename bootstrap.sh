@@ -22,3 +22,6 @@ fi
 # copy over scripts
 cp ./bin/srcroutine $BIN_DIR/bin
 cp ./lib/env $SRCROUTINE_ROOT/lib/env
+
+# replace placeholders with vars from headers
+sed -i s/BOOSTRAP_SRCROUTINE_ROOT_PLACEHOLDER/$SRCROUTINE_ROOT/ /lib/env
