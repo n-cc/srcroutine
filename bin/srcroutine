@@ -16,7 +16,7 @@ function usage() {
 
 function prechecks() {
 	if [[ "$EUID" != "0" ]] && [[ "$FORCE" != 1 ]]; then
-		echo "srcroutine must be run as root! to ignore this, pass the -f flag (note that srcroutine will assume your user has permissions to write to $SRCROUTINE_ROOT"
+		echo "srcroutine must be run as root! to ignore this, pass the -f flag (note that srcroutine will assume $USER has permissions to write to $SRCROUTINE_ROOT"
 		exit 1
 	fi
 }
