@@ -1,17 +1,28 @@
 #!/bin/bash
 source BOOTSTRAP_SRCROUTINE_ROOT_PLACEHOLDER/lib/env
 DRY=
+FORCE=
 
 function usage() {
-	echo "usage: install type/name flags"
+	echo "usage: srcroutine -i type/name flags"
 	echo "flags:"
+	echo :  -i = routine specification"
  	echo "  -d = dry run"
+	echo "  -f = force"
 	echo "  -h = help"
-	echo "example: srcroutine install net/curl -d"
-	exit 1
+	echo "example: srcroutine -i net/curl -d"
+	exit $1
 }
 
+function prechecks() {
+	if [[ "$EUID" != "0" ]] && [[ "$FORCE" != 1 ]]; then
+		echo "srcroutine must be run as root! to ignore this, pass the -f flag (note that srcroutine will assume your user has permissions to write to $SRCROUTINE_ROOT"
+		exit 1
+	fi
+}
 function main() {
+	prechecks
+
 	if [[ "$(ls $SRCROUTINE_ROOT/tars/$2 | wc -l)" == "0" ]]; then
 		echo "tar file $2 not found in $SRCROUTINE_ROOT/tars!"
 		exit 1
@@ -34,11 +45,12 @@ function main() {
 	bash $SRCROUTINE_ROOT/routines/$2 $DRY
 }
 
-while getopts ":dh" opt; do        
+while getopts ":dhfi:" opt; do        
 	case ${opt} in
-		h) usage ;;
-		d) DRY=1 ;;
-		*) main  ;;
+		h) usage 0      ;;
+		d) DRY=1        ;;
+		f) FORCE=1      ;;
+		i) main $OPTARG ;;
+		*) usage 1      ;;
 	esac
 done 
-main
