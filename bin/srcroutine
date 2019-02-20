@@ -1,38 +1,42 @@
 #!/bin/bash
-source /usr/src/lib/env
+source BOOTSTRAP_SRCROUTINE_ROOT_PLACEHOLDER/lib/env
 DRY=
 
-if [[ -z "$1" ]] || [[ "$1" == "-h" ]]; then
-  echo "usage: install type/name flags"
-  echo "flags:"
-  echo "  -d = dry run"
-  echo "  -h = help"
-  echo "example: srcroutine install net/curl -d"
-  exit
-fi
+function usage() {
+	echo "usage: install type/name flags"
+	echo "flags:"
+ 	echo "  -d = dry run"
+	echo "  -h = help"
+	echo "example: srcroutine install net/curl -d"
+	exit 1
+}
 
-if [[ "$3" == "-d" ]]; then
-  DRY=1
-fi
+function main() {
+	if [[ "$(ls $SRCROUTINE_ROOT/tars/$2 | wc -l)" == "0" ]]; then
+		echo "tar file $2 not found in $SRCROUTINE_ROOT/tars!"
+		exit 1
+	fi
+	if [[ "$(ls $SRCROUTINE_ROOT/tars/$2 | wc -l)" != "1" ]]; then
+		echo "more than one tar version of $2 detected at $SRCROUTINE_ROOT/tars!"
+		exit 1
+	fi
+	if [[ -n "$DRY" ]]; then
+		echo "would extract $SRCROUTINE_ROOT/tars/$2"
+	else
+		echo "extracting $SRCROUTINE_ROOT/tars/$2"
+		tar xf $SRCROUTINE_ROOT/tars/$2* $SRCROUTINE_ROOT/tars/$2
+	fi
+	if [[ -z "$DRY" ]]; then
+		cd $SRCROUTINE_ROOT/tars/$2
+		bash $SRCROUTINE_ROOT/routines/$2 $DRY
+	fi
+}
 
-if [[ "$(ls $SRCROUTINE_ROOT/tars/$2 | wc -l)" == "0" ]]; then
-  echo "tar file $2 not found in $SRCROUTINE_ROOT/tars!"
-  exit
-fi
-
-if [[ "$(ls $SRCROUTINE_ROOT/tars/$2 | wc -l)" != "1" ]]; then
-  echo "more than one tar version of $2 detected at $SRCROUTINE_ROOT/tars!"
-  exit
-fi
-
-if [[ -n "$DRY" ]]; then
-  echo "would extract $SRCROUTINE_ROOT/tars/$2"
-else
-  echo "extracting $SRCROUTINE_ROOT/tars/$2"
-  tar xf $SRCROUTINE_ROOT/tars/$2* $SRCROUTINE_ROOT/tars/$2
-fi
-
-if [[ -z "$DRY" ]]; then
-  cd $SRCROUTINE_ROOT/tars/$2
-  bash $SRCROUTINE_ROOT/routines/$2 $DRY
-fi
+while getopts ":dh" opt; do        
+	case ${opt} in
+		h) usage ;;
+		d) DRY=1 ;;
+		*) main  ;;
+	esac
+done 
+main
