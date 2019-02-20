@@ -6,7 +6,7 @@ FORCE=
 function usage() {
 	echo "usage: srcroutine -i type/name flags"
 	echo "flags:"
-	echo :  -i = routine specification"
+	echo "  -i = routine specification"
  	echo "  -d = dry run"
 	echo "  -f = force"
 	echo "  -h = help"
