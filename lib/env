@@ -1,5 +1,5 @@
 # srcroutine variables
-SRCROUTINE_ROOT="/usr/src"
+SRCROUTINE_ROOT="BOOTSTRAP_SRCROUTINE_ROOT_PLACEHOLDER"
 
 # configure-time variables
 PREFIX="/usr"

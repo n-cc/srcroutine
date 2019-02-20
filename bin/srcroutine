@@ -26,10 +26,12 @@ function main() {
 		echo "extracting $SRCROUTINE_ROOT/tars/$2"
 		tar xf $SRCROUTINE_ROOT/tars/$2* $SRCROUTINE_ROOT/tars/$2
 	fi
-	if [[ -z "$DRY" ]]; then
-		cd $SRCROUTINE_ROOT/tars/$2
-		bash $SRCROUTINE_ROOT/routines/$2 $DRY
+	if [[ -n "$DRY" ]]; then
+		echo "WARNING! This routine may not provide proper dry run support! Press enter to continue, CTRL^C to abort. "
+		read
 	fi
+	cd $SRCROUTINE_ROOT/tars/$2
+	bash $SRCROUTINE_ROOT/routines/$2 $DRY
 }
 
 while getopts ":dh" opt; do        
