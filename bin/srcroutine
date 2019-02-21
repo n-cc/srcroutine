@@ -43,6 +43,7 @@ function main() {
 	fi
 	cd $SRCROUTINE_ROOT/tars/$2
 	bash $SRCROUTINE_ROOT/routines/$2 $DRY
+	exit $?
 }
 
 while getopts ":dhfi:" opt; do        

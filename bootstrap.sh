@@ -35,7 +35,7 @@ if [[ "$MOVE_LFS" == 1 ]]; then
 fi
 
 # copy over scripts
-cp ./bin/srcroutine $BIN_DIR/bin
+cp ./bin/srcroutine $BIN_DIR/srcroutine
 cp ./lib/env $SRCROUTINE_ROOT/lib/env
 
 # replace placeholders with vars from headers
