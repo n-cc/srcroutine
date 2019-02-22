@@ -21,23 +21,28 @@ if [[ "$EUID" != "0" ]] && [[ "$FORCE" != 1 ]]; then
 	echo "bootstrap script must be run as root! to ignore this, modify the bootstrap.sh to set FORCE=1"
 	exit 1
 fi
-echo "before running this script, be sure you read the variables in the header and modified if nescessary! press any key to continue, CTRL^C to exit."
+echo -n "before running this script, be sure you read the variables in the header and modified if nescessary! press any key to continue, CTRL^C to exit. "
 read
 
 # generate file structures
+echo "creating $SRCROUTINE_ROOT structure..."
 mkdir -p $SRCROUTINE_ROOT/{lib,tars/linux,patches/lfs,routines/{lfs,linux}}
 
 # if enabled, convert LFS structure to srcroutine structure 
 if [[ "$MOVE_LFS" == 1 ]]; then
+	echo "migrating $LFS_SOURCES to $SRCROUTINE_ROOT..."
 	mv $LFS_SOURCES $SRCROUTINE_ROOT/tars/lfs
 	mv $SRCROUTINE_ROOT/tars/lfs/linux* $SRCROUTINE_ROOT/tars/linux/
 	mv $SRCROUTINE_ROOT/tars/lfs/*.patch $SRCROUTINE_ROOT/patches/lfs
 fi
 
 # copy over scripts
+echo "copying binaries..."
 cp ./bin/srcroutine $BIN_DIR/srcroutine
 cp ./lib/env $SRCROUTINE_ROOT/lib/env
 
 # replace placeholders with vars from headers
-sed -i s/BOOTSTRAP_SRCROUTINE_ROOT_PLACEHOLDER/$SRCROUTINE_ROOT/g $SRCROUTINE_ROOT/lib/env
-sed -i s/BOOTSTRAP_SRCROUTINE_ROOT_PLACEHOLDER/$SRCROUTINE_ROOT/g $BIN_DIR/srcroutine
+echo "replacing placeholder variables..."
+sed -i "s~BOOTSTRAP_SRCROUTINE_ROOT_PLACEHOLDER~$SRCROUTINE_ROOT~" $SRCROUTINE_ROOT/lib/env
+
+echo "done! you can now run the srcroutine command."
