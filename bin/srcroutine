@@ -14,44 +14,55 @@ function usage() {
 	exit $1
 }
 
-function prechecks() {
+function preChecks() {
 	if [[ "$EUID" != "0" ]] && [[ "$FORCE" != 1 ]]; then
-		echo "srcroutine must be run as root! to ignore this, pass the -f flag (note that srcroutine will assume $USER has permissions to write to $SRCROUTINE_ROOT"
+		echo "error: srcroutine must be run as root! to ignore this, pass the -f flag (note that srcroutine will assume $USER has permissions to write to $SRCROUTINE_ROOT"
 		exit 1
+	fi
+        if [ "$(find "$SRCROUTINE_ROOT/tars/" | grep "$1" | wc -l)" -lt "1" ]; then
+                echo "error: tar file $1 not found in $SRCROUTINE_ROOT!"
+                exit 1
+        fi
+        if [ "$(find "$SRCROUTINE_ROOT/tars/" | grep "$1" | wc -l)" -ge "2" ]; then
+                echo "error: more than one tar version of $1 detected in $SRCROUTINE_ROOT!"
+                exit 1
+        fi
+	if [ "$(find "$SRCROUTINE_ROOT/routines/" | grep "$1" | wc -l)" -lt "1" ]; then
+		echo "error: routine $1 not found!"
 	fi
 }
-function main() {
-	prechecks
 
-	if [[ "$(ls $SRCROUTINE_ROOT/tars/$2 | wc -l)" == "0" ]]; then
-		echo "tar file $2 not found in $SRCROUTINE_ROOT/tars!"
-		exit 1
-	fi
-	if [[ "$(ls $SRCROUTINE_ROOT/tars/$2 | wc -l)" != "1" ]]; then
-		echo "more than one tar version of $2 detected at $SRCROUTINE_ROOT/tars!"
-		exit 1
-	fi
-	if [[ -n "$DRY" ]]; then
-		echo "would extract $SRCROUTINE_ROOT/tars/$2"
+function getTar() {
+	echo "$(find $SRCROUTINE_ROOT | grep $1)"
+}
+
+function main() {
+	preChecks $1
+	TARFILE="$(getTar)"
+
+	if [ -n "$DRY" ]; then
+		echo "would extract $TARFILE"
 	else
-		echo "extracting $SRCROUTINE_ROOT/tars/$2"
-		tar xf $SRCROUTINE_ROOT/tars/$2* $SRCROUTINE_ROOT/tars/$2
+		echo "extracting $TARFILE"
+		tar xf $TARFILE $SRCROUTINE_ROOT/tars/$1
 	fi
-	if [[ -n "$DRY" ]]; then
+	if [ -n "$DRY" ]; then
 		echo "WARNING! This routine may not provide proper dry run support! Press enter to continue, CTRL^C to abort. "
 		read
 	fi
-	cd $SRCROUTINE_ROOT/tars/$2
-	bash $SRCROUTINE_ROOT/routines/$2 $DRY
+	cd $SRCROUTINE_ROOT/tars/$1
+	bash $SRCROUTINE_ROOT/routines/$1 $DRY
 	exit $?
 }
 
-while getopts ":dhfi:" opt; do        
+while getopts ":dhfi:" opt; do
 	case ${opt} in
 		h) usage 0      ;;
 		d) DRY=1        ;;
 		f) FORCE=1      ;;
 		i) main $OPTARG ;;
-		*) usage 1      ;;
+		\?) usage 1      ;;
 	esac
-done 
+done
+usage 1
+

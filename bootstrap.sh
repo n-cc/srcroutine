@@ -44,5 +44,6 @@ cp ./lib/env $SRCROUTINE_ROOT/lib/env
 # replace placeholders with vars from headers
 echo "replacing placeholder variables..."
 sed -i "s~BOOTSTRAP_SRCROUTINE_ROOT_PLACEHOLDER~$SRCROUTINE_ROOT~" $SRCROUTINE_ROOT/lib/env
+sed -i "s~BOOTSTRAP_SRCROUTINE_ROOT_PLACEHOLDER~$SRCROUTINE_ROOT~" $BIN_DIR/srcroutine
 
 echo "done! you can now run the srcroutine command."
